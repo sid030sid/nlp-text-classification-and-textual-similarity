@@ -27,10 +27,12 @@ decided to apply the chosen pre-processing steps (and why not the others).
 In this task you should do the following sub-tasks:
 - Split data into train and test sets. Use 20% of data as the test set.
 - Train a naïve Bayes model on the training part and test it, using the test set.
+
 o Compare the impact of different vectorization models (e.g., count vectorizer, TF-IDF
 and …) on the final performance of your naïve Bayes model.
 - Train a feed forward neural network model and report its performance (F1 score) on detecting
 spam messages on test data.
+
 o Again, compare the impact of different vectorization approaches on the final
 performance of your model.
 Please report all the achieved results with either models in your report document. Moreover, describe
