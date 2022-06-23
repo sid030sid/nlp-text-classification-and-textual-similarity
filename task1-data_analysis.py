@@ -21,23 +21,31 @@ stats["word_count_based_on_whitespaces"] = stats.apply(lambda row : len(row["mes
 print(stats.head(5))
 
 ##Graph comparing length of spam and normal messages (length = number of literals)
+pyplot.subplot(1,2,1)
 pyplot.hist(stats[stats.label == "spam"].length, alpha=0.5, label='spam')
 pyplot.hist(stats[stats.label == "ham"].length, alpha=0.5, label='ham')
 pyplot.legend(loc='upper right')
 pyplot.title('Histogram of length of message for spam or ham (non-spam)')  
 pyplot.xlabel('Length in number of literals')
 pyplot.ylabel('Number of Messages')
-pyplot.show()
 
 ##Graph comparing the number of words (found based on seperating by white spaces)
 ###to do
+pyplot.subplot(1,2,2)
+pyplot.hist(stats[stats.label == "spam"].word_count_based_on_whitespaces, alpha=0.5, label='spam')
+pyplot.hist(stats[stats.label == "ham"].word_count_based_on_whitespaces, alpha=0.5, label='ham')
+pyplot.legend(loc='upper right')
+pyplot.title('Histogram of number of words in one message for spam or ham (non-spam)')  
+pyplot.xlabel('Number of words (based on seperation by whitespaces)')
+pyplot.ylabel('Number of Messages')
+pyplot.show()
 
 #based on spacy
 ##Number of unique words in each category (spam and normal messages) and also in the whole dataset
 ### mandatory to do
 """""
 for message in data["message"]:
-    doc = nlp(message)
+    doc = nlp(message) #creating a nlp object based on this test includes first pre-processing: tokenization
     count_numbers_in_message = 0
     for token in doc:
         # Check if the token resembles a number
