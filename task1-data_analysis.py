@@ -37,6 +37,14 @@ stats["word_count_based_on_whitespaces"] = stats.apply(lambda row : len(row["mes
 stats["average_word_length"] = stats.apply(lambda row : sum(len(word) for word in row["message"].split()) / row["word_count_based_on_whitespaces"], axis=1)
 print(stats.head(5))
 
+
+
+## Summary of analysis
+#to do: min, max, mean, median of all numeral columns of stats and group by label (=spam or ham)
+summary = stats
+
+
+
 ## Visualisation of analysis of column: message
 ## Graph comparing length of spam and normal messages (length = number of literals)
 pyplot.subplot(2,2,1)
@@ -66,13 +74,14 @@ pyplot.xlabel('Average word length')
 pyplot.ylabel('Number of Messages')
 pyplot.show()
 
-#based on spacy
+#based on spacy## Bag of words as frequently used analysis
+
 
 ## Number of unique words in each category (spam and normal messages) and also in the whole dataset
 ### mandatory to do
 """""
 for message in data["message"]:
-    doc = nlp(message) #creating a nlp object based on this test includes first pre-processing: tokenization
+    doc = nlp(message) #creating a nlp object includes first pre-processing: tokenization
     count_numbers_in_message = 0
     for token in doc:
         # Check if the token resembles a number
@@ -80,11 +89,15 @@ for message in data["message"]:
             count_numbers_in_message = count_numbers_in_message + 1
     print("number of numerals: ", count_numbers_in_message, "; message: ", message)
 """
-### Top 10 of most used (unique) words in each category (spam and normal messages)
+
+## Top 10 of most used (unique) words in each category (spam and normal messages)
 ### to do
 
+## word cloud for each category (= visualisation of frequency of words per category)
+### to do
 
 ## Stop word analysis:
+#to do
 stopwords = nltk.download('stopwords')
 stop=set(stopwords.words('english'))
 
