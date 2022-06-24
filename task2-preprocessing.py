@@ -1,0 +1,1 @@
+# read before and follow: https://www.kdnuggets.com/2017/02/natural-language-processing-key-terms-explained.html
