@@ -1,12 +1,12 @@
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot
-from spacy.lang.en import English   
+import spacy
 from collections import Counter
 import nltk
 
 # Create the nlp object
-nlp = English()
+nlp = spacy.load("en_core_web_lg")
 
 # Import data set: SMSSpamCollection
 data = pd.read_csv("data/SMSSpamCollection", sep="\t", names=["label", "message"])
@@ -24,16 +24,21 @@ stats["count_numbers"] = stats.apply(lambda row : sum(c.isdigit() for c in row["
 ### Number of letters numbers per message
 stats["count_letters"] = stats.apply(lambda row : sum(c.isalpha() for c in row["message"]), axis=1)
 
-### Number of whtiespaces per message
+### Number of whitespaces per message
 stats["count_spaces"] = stats.apply(lambda row : sum(c.isspace() for c in row["message"]), axis=1)
+
+### Number of dots per message
+#### to --> super easy done with spacy
 
 ### Number of other literals per message
 stats["count_other_literals"] = stats.apply(lambda row : (row["length"] - row["count_numbers"] - row["count_letters"] - row["count_spaces"]), axis=1)
 
 ### Number of words per messaged (based on seperation by whitespacs)
+#to do: think about how this would be better if it is done with spacy
 stats["word_count_based_on_whitespaces"] = stats.apply(lambda row : len(row["message"].split()), axis=1)
 
 ### Average length of words per message
+#to do: think about how this would be better if it is done with spacy
 stats["average_word_length"] = stats.apply(lambda row : sum(len(word) for word in row["message"].split()) / row["word_count_based_on_whitespaces"], axis=1)
 
 
@@ -54,23 +59,34 @@ pyplot.title('Histogram of length of message for spam or ham (non-spam)')
 pyplot.xlabel('Length in number of literals')
 pyplot.ylabel('Number of Messages')
 
-### Graph comparing the number of words (found based on seperating by white spaces)
+### Graph comparing the number of numbers in spam and ham messages
 pyplot.subplot(2,2,2)
+pyplot.hist(stats[stats.label == "spam"].count_numbers, alpha=0.5, label='spam')
+pyplot.hist(stats[stats.label == "ham"].count_numbers, alpha=0.5, label='ham')
+pyplot.legend(loc='upper right')
+pyplot.title('Histogram of amount of numbers in one message for spam or ham (non-spam)')  
+pyplot.xlabel('Amount of numbers')
+pyplot.ylabel('Number of Messages')
+
+### Graph comparing the amount of words in spam and non-spam
+pyplot.subplot(2,2,3)
 pyplot.hist(stats[stats.label == "spam"].word_count_based_on_whitespaces, alpha=0.5, label='spam')
 pyplot.hist(stats[stats.label == "ham"].word_count_based_on_whitespaces, alpha=0.5, label='ham')
 pyplot.legend(loc='upper right')
-pyplot.title('Histogram of number of words in one message for spam or ham (non-spam)')  
-pyplot.xlabel('Number of words (based on seperation by whitespaces)')
+pyplot.title('Histogram of amount of words in one message for spam or ham (non-spam)')  
+pyplot.xlabel('Amount of words')
 pyplot.ylabel('Number of Messages')
 
 ### Graph comparing the average word length of any message for spam and non-spam
-pyplot.subplot(2,2,3)
+pyplot.subplot(2,2,4)
 pyplot.hist(stats[stats.label == "spam"].average_word_length, alpha=0.5, label='spam')
 pyplot.hist(stats[stats.label == "ham"].average_word_length, alpha=0.5, label='ham')
 pyplot.legend(loc='upper right')
 pyplot.title('Histogram of average word length in one message for spam or ham (non-spam)')  
 pyplot.xlabel('Average word length')
 pyplot.ylabel('Number of Messages')
+
+### print all graphs
 #pyplot.show()
 
 
@@ -138,3 +154,22 @@ print("Top 10 most used stopwords in non-spam messages: ", ham_stopwords.most_co
 ###eventually do:
 ###Number of spelling mistakes in each category (spam and normal messages) and also in the whole dataset
 ###
+
+#TASK 4:
+
+# choose 15 random spam messages
+sample = corpus[corpus.label == "spam"].sample(15)
+print(sample.head())
+
+# compute semantic textual similarity with the average of word vectors as a distributional semantics approach in sentence level
+## to do: can similarity function of spacy be used: it seems like yes: https://stackoverflow.com/questions/52113939/spacy-strange-similarity-between-two-sentences
+## to do: erase stop words and do all the pre-processing before making similarity check
+'''
+according to data camp lecture: large-scale-data-analysis-with-spacy
+How does spaCy predict similarity?
+Default: cosine similarity, but can be adjusted
+'''
+print(sample["doc"].iloc[0].similarity(sample["doc"].iloc[1]))
+##for doc in sample:
+    ##for doc
+# cosine similarity between randomly selected sentences
