@@ -11,9 +11,8 @@ data = pd.read_csv("data/SMSSpamCollection", sep="\t", names=["label", "message"
 corpus = pd.DataFrame(data.label)
 corpus["docs"] = data.message.apply(lambda doc : nlp(doc.lower())) # includes pre-proccessing step: tokenization, removal of white spaces and normalizing (lower case)
 
-# Pre-processing to dooo
+# Pre-processing
 ## note: consider that naive baysian algorithm considers total amount of words in spam and non-spam messages as well as how often a certain word occures in spam or non-spam messages
-
 ## remove stop words, punctuations and white spaces as well as normalise tokens by making all tokens lower case
 corpus["processed_docs"] = corpus.docs.apply(lambda doc : [token for token in doc if not token.is_stop and not token.is_punct and not token.is_space])
 
