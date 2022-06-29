@@ -96,4 +96,8 @@ def naive_baysian_spam_filter(doc):
 # test model
 test_set["classification_decision"] = test_set.docs[lambda doc : naive_baysian_spam_filter(doc)]
 
-# assess performance
+# assess performance (F1 score)
+## to do
+
+# compare the naive baysian model'S performance for differen vectoiruation methods
+## to do
