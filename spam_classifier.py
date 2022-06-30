@@ -1,5 +1,5 @@
 # to do: 
-#continue wth task 3: free neural net
+#continue wth task 3: list set up of hyper param of neural net (ideally like in lecture mentioned); compute f1 score; train and test nd and mlp models several times to have solid results for comparison
 #task 4: in a clean way and in its on py file
 #task 1 + write report
 
@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix
 
 # import data
@@ -75,4 +76,24 @@ for vectorizer in vectorizers:
 # follow this tutorial: https://towardsdatascience.com/feed-forward-neural-networks-how-to-successfully-build-them-in-python-74503409d99a
 # use sklearn's MLPClassifier to build feedforward neural net: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html#sklearn.neural_network.MLPClassifier
 # example of how to use sklearn MLPClassifier object: https://scikit-learn.org/stable/modules/neural_networks_supervised.html
+for vectorizer in vectorizers:
+    # vectorize train and test data
+    x_train_vectorized = vectorizer[1].fit_transform(x_train.values)
+    x_test_vectorized = vectorizer[1].transform(x_test.values)
 
+    # set up feedforward neural net classifier
+    mlp = MLPClassifier(random_state=1, max_iter=300)
+    
+    # train neural net
+    mlp.fit(x_train_vectorized, y_train)
+
+    # test neural net
+    pred = mlp.predict(x_test_vectorized)
+
+    # evaluate test
+    score = accuracy_score(y_test, pred)
+    cm = confusion_matrix(y_test.values, pred, labels=['spam', 'ham'])
+    print("vectorization approach:", vectorizer[0])
+    print("accuracy:", score)
+    print("confusion matrix (spam-ham):", cm)
+    print("\n")
