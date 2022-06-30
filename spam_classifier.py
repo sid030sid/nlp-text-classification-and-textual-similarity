@@ -1,7 +1,8 @@
 # to do: 
-#continue wth task 3: list set up of hyper param of neural net (ideally like in lecture mentioned); compute f1 score; train and test nd and mlp models several times to have solid results for comparison
+#continue wth task 3: compute f1 score; find out proper perfmance measurement technique --> train and test nd and mlp models several times to have solid results for comparison
 #task 4: in a clean way and in its on py file
 #task 1 + write report
+# bonus task
 
 
 import pandas as pd
@@ -82,6 +83,7 @@ for vectorizer in vectorizers:
 # 2. loss function --> from doc: "This model optimizes the log-loss function using LBFGS or stochastic gradient descent." Thus, the feed forward neural net uses the default log-loss function which is also recomended by the lecture.
 # 3. number of hidden layers --> default value = n_layers - 2 = 3 - 2 = 1. The used neural net uses one hidden layer as "or many practical problems, there is no reason to use any more than one hidden layer." (soruce: Introduction to Neural Networks for Java (second edition) by Jeff Heaton [near table 5.1.] --> reference:https://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw)
 # 4. number of neurons per hidden layer --> default value is used which is 100 --> as it is a matter of try and error to find an optimal number of neurons per hidden layer (according to Jeff Heaton). We can go with the first try as it outputd promising accuracy results
+
 # = 2/3 * input_layer_size + output_layer_size = 2/3 * ... to do ... + 1 (input_layer_size = number of input variables in the data being processed [soruce: https://towardsdatascience.com/beginners-ask-how-many-hidden-layers-neurons-to-use-in-artificial-neural-networks-51466afa0d3e])
 # Jeff Heaton mentions three rule-of-thumb methods for chosing the number of neurons per hidden layer. 
 # For the used neural net the second method was followed, namely "The number of hidden neurons should be 2/3 the size of the input layer, plus the size of the output layer." 
