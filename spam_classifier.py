@@ -76,6 +76,19 @@ for vectorizer in vectorizers:
 # follow this tutorial: https://towardsdatascience.com/feed-forward-neural-networks-how-to-successfully-build-them-in-python-74503409d99a
 # use sklearn's MLPClassifier to build feedforward neural net: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html#sklearn.neural_network.MLPClassifier
 # example of how to use sklearn MLPClassifier object: https://scikit-learn.org/stable/modules/neural_networks_supervised.html
+
+# hyper parameters of used feed forward neural net which is based on sklearn's MLPClassifier object (source: https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html#sklearn.neural_network.MLPClassifier)
+# 1. activation function --> Relu was chosen as it is usally the best one according to the lecture. sklearn's MLPClassifier object user per default Relu.
+# 2. loss function --> from doc: "This model optimizes the log-loss function using LBFGS or stochastic gradient descent." Thus, the feed forward neural net uses the default log-loss function which is also recomended by the lecture.
+# 3. number of hidden layers --> default value = n_layers - 2 = 3 - 2 = 1. The used neural net uses one hidden layer as "or many practical problems, there is no reason to use any more than one hidden layer." (soruce: Introduction to Neural Networks for Java (second edition) by Jeff Heaton [near table 5.1.] --> reference:https://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw)
+# 4. number of neurons per hidden layer --> default value is used which is 100 --> as it is a matter of try and error to find an optimal number of neurons per hidden layer (according to Jeff Heaton). We can go with the first try as it outputd promising accuracy results
+# = 2/3 * input_layer_size + output_layer_size = 2/3 * ... to do ... + 1 (input_layer_size = number of input variables in the data being processed [soruce: https://towardsdatascience.com/beginners-ask-how-many-hidden-layers-neurons-to-use-in-artificial-neural-networks-51466afa0d3e])
+# Jeff Heaton mentions three rule-of-thumb methods for chosing the number of neurons per hidden layer. 
+# For the used neural net the second method was followed, namely "The number of hidden neurons should be 2/3 the size of the input layer, plus the size of the output layer." 
+# Nonetheless, "the selection of an architecture for your neural network will come down to trial and error". (according to Jeff Heaton)
+
+# 5. design of output layer --> sklearn's MLPClassifier default is used which is 1. This can be found out by calling the n_outputs_ attribute of the initiate MLPClassifier object.
+# 6. all other hyper param are set to default of sklearn's MLPClassifier
 for vectorizer in vectorizers:
     # vectorize train and test data
     x_train_vectorized = vectorizer[1].fit_transform(x_train.values)
@@ -94,6 +107,12 @@ for vectorizer in vectorizers:
     score = accuracy_score(y_test, pred)
     cm = confusion_matrix(y_test.values, pred, labels=['spam', 'ham'])
     print("vectorization approach:", vectorizer[0])
+    print(
+        "hyper parameters:\nnumber of output neurons:", mlp.n_outputs_,
+        "\nnumber of hidden layers:", mlp.n_layers_, 
+        "\nused activation function:", mlp.out_activation_,
+        "\nclasses:", mlp.classes_
+    )
     print("accuracy:", score)
     print("confusion matrix (spam-ham):", cm)
     print("\n")
