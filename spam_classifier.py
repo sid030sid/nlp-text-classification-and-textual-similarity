@@ -1,3 +1,10 @@
+# to do: 
+#task 2: preprocessing in this file
+#continue wth task 3: free neural net
+#task 4: in a clean way and in its on py file
+#task 1 + write report
+
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
@@ -35,7 +42,7 @@ vectorizers = [
     ["1-2-gram", one2twoGram_vectorizer]
 ]
 
-# create naive baysian spam classifier for every vectorization approach
+# create, train and test naive baysian spam classifier for every vectorization approach
 for vectorizer in vectorizers:
 
     # vectorize train and test data
@@ -58,3 +65,7 @@ for vectorizer in vectorizers:
     print("accuracy:", score)
     print("confusion matrix (spam-ham):", cm)
     print("\n")
+
+# free forward neural net
+# to do google: classification with free forward neural net
+# follow this tutorial: https://towardsdatascience.com/feed-forward-neural-networks-how-to-successfully-build-them-in-python-74503409d99a
