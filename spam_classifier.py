@@ -1,9 +1,15 @@
 # to do: 
-#continue wth task 3: find out proper perfmance measurement technique --> train and test nd and mlp models several times to have solid results for comparison
+#task 3: do cross validation for proper performance comparison: https://machinelearningmastery.com/compare-machine-learning-algorithms-python-scikit-learn/
+#task3: how does cross validation reveal overfitting? how to interpret cross validation result?
 #task 4: in a clean way and in its on py file
 #task 1 + write report
 # bonus task
 
+# to do for report:
+# 1. mention that multionominalNB was used. why? one of two common classifiers in text classification (soruce: https://scikit-learn.org/stable/modules/naive_bayes.html)
+# 2. highlight differences between mutlinominalNB as taught in lecture 
+# --> multinomoinalNB uses laplace smoothing which "accounts for features not present in the learning samples and prevents zero probabilities" (soruce: https://scikit-learn.org/stable/modules/naive_bayes.html). the NB according to lecture does not account for this. for the case that one token does no appear in whole training set for one classification category the whole document's probability to be in the respective classification category is zero
+# 3.
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
