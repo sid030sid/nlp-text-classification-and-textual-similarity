@@ -1,5 +1,5 @@
 # to do: 
-#continue wth task 3: compute f1 score; find out proper perfmance measurement technique --> train and test nd and mlp models several times to have solid results for comparison
+#continue wth task 3: find out proper perfmance measurement technique --> train and test nd and mlp models several times to have solid results for comparison
 #task 4: in a clean way and in its on py file
 #task 1 + write report
 # bonus task
@@ -11,7 +11,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
 
 # import data
 corpus = pd.read_csv("data/SMSSpamCollection", sep="\t", names=["label", "message"])
@@ -106,12 +106,13 @@ for vectorizer in vectorizers:
     pred = mlp.predict(x_test_vectorized)
 
     # evaluate test
-    score = accuracy_score(y_test, pred)
+    accurcy = accuracy_score(y_test, pred)
+    f1 = f1_score(y_test, pred)
     cm = confusion_matrix(y_test.values, pred, labels=['spam', 'ham'])
     print("vectorization approach:", vectorizer[0])
     print(
         "hyper parameters:\nnumber of output neurons:", mlp.n_outputs_,
-        "\nnumber of hidden layers:", mlp.n_layers_, 
+        "\nnumber of hidden layers:", mlp.n_layers_,
         "\nused activation function:", mlp.out_activation_,
         "\nclasses:", mlp.classes_
     )
