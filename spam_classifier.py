@@ -9,7 +9,7 @@
 # 1. mention that multionominalNB was used. why? one of two common classifiers in text classification (soruce: https://scikit-learn.org/stable/modules/naive_bayes.html)
 # 2. highlight differences between mutlinominalNB as taught in lecture 
 # --> multinomoinalNB uses laplace smoothing which "accounts for features not present in the learning samples and prevents zero probabilities" (soruce: https://scikit-learn.org/stable/modules/naive_bayes.html). the NB according to lecture does not account for this. for the case that one token does no appear in whole training set for one classification category the whole document's probability to be in the respective classification category is zero
-# 3.
+# 3. task 3 regarding performance: nb is good for all vectorisation when it comes to minimal false negative which is declaring spam messages wrongly as non-spam. this is our alpha error one would like to minimize.
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -17,7 +17,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neural_network import MLPClassifier
+from sklearn import model_selection # for cross validation
 from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
+import dataframe_image as dfi
 
 # import data
 corpus = pd.read_csv("data/SMSSpamCollection", sep="\t", names=["label", "message"])
@@ -48,19 +50,19 @@ bigram_vectorizer = CountVectorizer(ngram_range=(2, 2), lowercase=True)
 one2twoGram_vectorizer = CountVectorizer(ngram_range=(1, 2), lowercase=True)
 
 ## summarize vectorizers
-vectorizers = [
-    ["bow", bow_vectorizer], 
-    ["tfidf", tfidf_vectorizer],
-    ["bigram", bigram_vectorizer],
-    ["1-2-gram", one2twoGram_vectorizer]
-]
+vectorizers = []
+vectorizers.append(("bow", bow_vectorizer))
+vectorizers.append(("tfidf", tfidf_vectorizer))
+vectorizers.append(("bigram", bigram_vectorizer))
+vectorizers.append(("1-2-gram", one2twoGram_vectorizer))
 
 # create, train and test naive baysian spam classifier for every vectorization approach
-for vectorizer in vectorizers:
+nb_results = [] # variable storing peroformance indicators to compare naive baysian models' performance depending on vectorization method
+for name, vectorizer in vectorizers:
 
     # vectorize train and test data
-    x_train_vectorized = vectorizer[1].fit_transform(x_train.values)
-    x_test_vectorized = vectorizer[1].transform(x_test.values)
+    x_train_vectorized = vectorizer.fit_transform(x_train.values)
+    x_test_vectorized = vectorizer.transform(x_test.values)
 
     # set up naive baysian model
     nb = MultinomialNB()
@@ -72,12 +74,25 @@ for vectorizer in vectorizers:
     pred = nb.predict(x_test_vectorized)
 
     # evaluate test
-    score = accuracy_score(y_test, pred)
+    accuracy = accuracy_score(y_test, pred)
+    f1 = f1_score(y_test, pred, pos_label="spam")
     cm = confusion_matrix(y_test.values, pred, labels=['spam', 'ham'])
+
+    # store results
+    nb_results.append((name, accuracy, f1, cm[0][0], cm[0][1], cm[1][0], cm[1][1]))
+    '''
+    # store results
     print("vectorization approach:", vectorizer[0])
-    print("accuracy:", score)
+    print("accuracy:", accuracy)
+    print("f1:", f1)
     print("confusion matrix (spam-ham):", cm)
     print("\n")
+    '''
+
+# comparison of naive baysian spam classifier's performance depending on vectorization method
+nb_performance_comparison = pd.DataFrame(nb_results)
+nb_performance_comparison.columns = ["vectorizer", "accuracy", "f1", "true-positive", "false-positive", "false-negative", "true-negative"]
+dfi.export(nb_performance_comparison, "documentation/tables_as_image/nb_performance_comparison.png")
 
 # spam classifier based on a feed forward neural network
 # follow this tutorial: https://towardsdatascience.com/feed-forward-neural-networks-how-to-successfully-build-them-in-python-74503409d99a
@@ -112,8 +127,8 @@ for vectorizer in vectorizers:
     pred = mlp.predict(x_test_vectorized)
 
     # evaluate test
-    accurcy = accuracy_score(y_test, pred)
-    f1 = f1_score(y_test, pred)
+    accuracy = accuracy_score(y_test, pred)
+    f1 = f1_score(y_test, pred, pos_label="spam")
     cm = confusion_matrix(y_test.values, pred, labels=['spam', 'ham'])
     print("vectorization approach:", vectorizer[0])
     print(
@@ -122,6 +137,7 @@ for vectorizer in vectorizers:
         "\nused activation function:", mlp.out_activation_,
         "\nclasses:", mlp.classes_
     )
-    print("accuracy:", score)
+    print("accuracy:", accuracy)
+    print("f1:", f1)
     print("confusion matrix (spam-ham):", cm)
     print("\n")

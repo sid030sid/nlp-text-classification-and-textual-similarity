@@ -211,7 +211,7 @@ summary1 = stats.groupby("label").agg({
     "average_word_length" : ["min", "mean", "median", "max"]
 })
 summary1["count_unique_words"] = [len(ham_unique_words), len(spam_unique_words)]
-dfi.export(summary1, "summary_text_analysis.png")
+dfi.export(summary1, "documentation/tables_as_image/summary_text_analysis.png")
 
 ## Summary of analysis of literals
 summary2 = stats.groupby("label").agg({
@@ -221,7 +221,7 @@ summary2 = stats.groupby("label").agg({
     "count_spaces" : ["min", "mean", "median", "max"],
     "count_other_literals" : ["min", "mean", "median", "max"]
 })
-dfi.export(summary2, "summary_literal_analysis.png")
+dfi.export(summary2, "documentation/tables_as_image/summary_literal_analysis.png")
 
 ###all upper to dos are based on the given task or this guide:https://neptune.ai/blog/exploratory-data-analysis-natural-language-processing-tools
 # or this one: https://towardsdatascience.com/nlp-part-3-exploratory-data-analysis-of-text-data-1caa8ab3f79d
