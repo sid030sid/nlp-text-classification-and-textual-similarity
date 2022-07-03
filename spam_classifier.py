@@ -10,7 +10,6 @@
 # 2. highlight differences between mutlinominalNB as taught in lecture 
 # --> multinomoinalNB uses laplace smoothing which "accounts for features not present in the learning samples and prevents zero probabilities" (soruce: https://scikit-learn.org/stable/modules/naive_bayes.html). the NB according to lecture does not account for this. for the case that one token does no appear in whole training set for one classification category the whole document's probability to be in the respective classification category is zero
 # 3. task 3 regarding performance: nb is good for all vectorisation when it comes to minimal false negative which is declaring spam messages wrongly as non-spam. this is our alpha error one would like to minimize.
-
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
@@ -112,10 +111,11 @@ dfi.export(nb_performance_comparison, "documentation/tables_as_image/nb_performa
 
 # 5. design of output layer --> sklearn's MLPClassifier default is used which is 1. This can be found out by calling the n_outputs_ attribute of the initiate MLPClassifier object.
 # 6. all other hyper param are set to default of sklearn's MLPClassifier
-for vectorizer in vectorizers:
+feed_forward_results = [] # variable storing peroformance indicators to compare feed forward neural net's performance depending on vectorization method
+for name, vectorizer in vectorizers:
     # vectorize train and test data
-    x_train_vectorized = vectorizer[1].fit_transform(x_train.values)
-    x_test_vectorized = vectorizer[1].transform(x_test.values)
+    x_train_vectorized = vectorizer.fit_transform(x_train.values)
+    x_test_vectorized = vectorizer.transform(x_test.values)
 
     # set up feedforward neural net classifier
     mlp = MLPClassifier(random_state=1, max_iter=300)
@@ -130,6 +130,10 @@ for vectorizer in vectorizers:
     accuracy = accuracy_score(y_test, pred)
     f1 = f1_score(y_test, pred, pos_label="spam")
     cm = confusion_matrix(y_test.values, pred, labels=['spam', 'ham'])
+
+    # store results
+    feed_forward_results.append((name, accuracy, f1, cm[0][0], cm[0][1], cm[1][0], cm[1][1]))
+    '''
     print("vectorization approach:", vectorizer[0])
     print(
         "hyper parameters:\nnumber of output neurons:", mlp.n_outputs_,
@@ -141,3 +145,9 @@ for vectorizer in vectorizers:
     print("f1:", f1)
     print("confusion matrix (spam-ham):", cm)
     print("\n")
+    '''
+
+# comparison of naive baysian spam classifier's performance depending on vectorization method
+feed_forward_performance_comparison = pd.DataFrame(feed_forward_results)
+feed_forward_performance_comparison.columns = ["vectorizer", "accuracy", "f1", "true-positive", "false-positive", "false-negative", "true-negative"]
+dfi.export(feed_forward_performance_comparison, "documentation/tables_as_image/feed_forward_neural_net_performance_comparison.png")
