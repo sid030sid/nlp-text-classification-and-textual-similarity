@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot
+import seaborn as sns
 import spacy
 from collections import Counter
-import nltk
 import dataframe_image as dfi
 
 # Create the nlp object
@@ -31,8 +31,8 @@ stats["count_spaces"] = stats.apply(lambda row : sum(c.isspace() for c in row["m
 ### Number of dots per message
 stats["count_dots"] = stats.apply(lambda row : sum(c == "." for c in row["message"]), axis=1)
 
-### Number of other literals per message
-stats["count_other_literals"] = stats.apply(lambda row : (row["length"] - row["count_numbers"] - row["count_letters"] - row["count_spaces"] - row["count_dots"]), axis=1)
+### Number of other characters per message
+stats["count_other_characters"] = stats.apply(lambda row : (row["length"] - row["count_numbers"] - row["count_letters"] - row["count_spaces"] - row["count_dots"]), axis=1)
 
 ### Number of words per messaged (based on seperation by whitespacs)
 #to do: think about how this would be better if it is done with spacy --> does not matter how as long as you specifically mention the implications of chosing this approach in the report
@@ -46,30 +46,33 @@ stats["average_word_length"] = stats.apply(lambda row : sum(len(word) for word i
 
 
 ## Visualisation of text
-### Graph comparing length of spam and normal messages (length = number of literals)
-pyplot.subplot(3,1,1)
+### Boxplot comparing length of spam and normal messages (length = number of characters)
+sns.boxplot(y='length', x="label", data=stats, hue='label').set_title("Boxplot of length of a spam or ham (non-spam) message")
+pyplot.show()
+
+### Histograp comparing length of spam and normal messages (length = number of characters)
 pyplot.hist(stats[stats.label == "spam"].length, alpha=0.5, label='spam')
 pyplot.hist(stats[stats.label == "ham"].length, alpha=0.5, label='ham')
 pyplot.legend(loc='upper right')
-pyplot.title('Histogram of length of message for spam or ham (non-spam)')  
-pyplot.xlabel('Length in number of literals')
+pyplot.title('Histogram of length of a spam or non-spam message')  
+pyplot.xlabel('Length in number of characters')
 pyplot.ylabel('Number of messages')
+pyplot.show()
 
 ### Graph comparing the amount of words in spam and non-spam
-pyplot.subplot(3,1,2)
 pyplot.hist(stats[stats.label == "spam"].word_count_based_on_whitespaces, alpha=0.5, label='spam')
 pyplot.hist(stats[stats.label == "ham"].word_count_based_on_whitespaces, alpha=0.5, label='ham')
 pyplot.legend(loc='upper right')
-pyplot.title('Histogram of amount of words in one message for spam or ham (non-spam)')  
+pyplot.title('Histogram of amount of words in a spam or non-spam message')  
 pyplot.xlabel('Amount of words')
 pyplot.ylabel('Number of messages')
+pyplot.show()
 
 ### Graph comparing the average word length of any message for spam and non-spam
-pyplot.subplot(3,1,3)
 pyplot.hist(stats[stats.label == "spam"].average_word_length, alpha=0.5, label='spam')
 pyplot.hist(stats[stats.label == "ham"].average_word_length, alpha=0.5, label='ham')
 pyplot.legend(loc='upper right')
-pyplot.title('Histogram of average word length in one message for spam or ham (non-spam)')  
+pyplot.title('Histogram of average word length in a spam or non-spam message')  
 pyplot.xlabel('Average word length')
 pyplot.ylabel('Number of messages')
 
@@ -78,12 +81,12 @@ pyplot.show()
 
 
 
-## Visualisation of analysis of literals
+## Visualisation of analysis of characters
 ### Graph comparing the number of numbers in spam and ham messages
 pyplot.hist(stats[stats.label == "spam"].count_numbers, alpha=0.5, label='spam')
 pyplot.hist(stats[stats.label == "ham"].count_numbers, alpha=0.5, label='ham')
 pyplot.legend(loc='upper right')
-pyplot.title('Histogram of amount of numbers in one message for spam or ham (non-spam)')  
+pyplot.title('Histogram of amount of numbers in a spam or non-spam message')  
 pyplot.xlabel('Amount of numbers')
 pyplot.ylabel('Number of messages')
 pyplot.show()
@@ -92,7 +95,7 @@ pyplot.show()
 pyplot.hist(stats[stats.label == "spam"].count_dots, alpha=0.5, label='spam')
 pyplot.hist(stats[stats.label == "ham"].count_dots, alpha=0.5, label='ham')
 pyplot.legend(loc='upper right')
-pyplot.title('Histogram of amount of dots in one message for spam or ham (non-spam)')  
+pyplot.title('Histogram of amount of dots in a spam or non-spam message')  
 pyplot.xlabel('Amount of dots')
 pyplot.ylabel('Number of messages')
 pyplot.show()
@@ -101,17 +104,17 @@ pyplot.show()
 pyplot.hist(stats[stats.label == "spam"].count_spaces, alpha=0.5, label='spam')
 pyplot.hist(stats[stats.label == "ham"].count_spaces, alpha=0.5, label='ham')
 pyplot.legend(loc='upper right')
-pyplot.title('Histogram of amount of whitespaces in one message for spam or ham (non-spam)')  
+pyplot.title('Histogram of amount of whitespaces in a spam or non-spam message')  
 pyplot.xlabel('Amount of whitespaces')
 pyplot.ylabel('Number of messages')
 pyplot.show()
 
 ### Graph comparing the number of special letters [special = not a letter, number, whitespace or dot] in spam and ham messages
-pyplot.hist(stats[stats.label == "spam"].count_other_literals, alpha=0.5, label='spam')
-pyplot.hist(stats[stats.label == "ham"].count_other_literals, alpha=0.5, label='ham')
+pyplot.hist(stats[stats.label == "spam"].count_other_characters, alpha=0.5, label='spam')
+pyplot.hist(stats[stats.label == "ham"].count_other_characters, alpha=0.5, label='ham')
 pyplot.legend(loc='upper right')
-pyplot.title('Histogram of amount of special literals in one message for spam or ham (non-spam)')  
-pyplot.xlabel('Amount of special literals')
+pyplot.title('Histogram of amount of special characters in a spam or non-spam message')  
+pyplot.xlabel('Amount of special characters')
 pyplot.ylabel('Number of messages')
 pyplot.show()
 
@@ -119,14 +122,7 @@ pyplot.show()
 
 #Analysis via spacy package
 corpus = pd.DataFrame(data.label)
-corpus["doc"] = data.message.apply(lambda doc : nlp(doc))  #creating a nlp object includes first pre-processing: tokenization
-
-"""
-not necessary
-corpus["words"] = corpus.doc.apply(lambda doc : ([token for token in doc if not token.is_stop and not token.is_punct]))
-corpus["stopwords"] = corpus.doc.apply(lambda doc : ([token for token in doc if token.is_stop]))
-corpus["punctuations"] = corpus.doc.apply(lambda doc : ([token for token in doc if token.is_punct]))
-"""
+corpus["doc"] = data.message.apply(lambda doc : nlp(doc))
 
 ## Number of unique words in each category (spam and normal messages) and also in the whole dataset
 ### for spam messages
@@ -152,11 +148,6 @@ print("Top 10 most used words in non-spam messages: ", ham_word_freq.most_common
 pyplot.bar([item[0] for item in ham_word_freq.most_common(10)], [item[1] for item in ham_word_freq.most_common(10)])
 pyplot.title('Top 10 most used words in non-spam messages')  
 pyplot.show()
-
-
-
-## word cloud for each category (= visualisation of frequency of words per category)
-### to do: eventually
 
 
 
@@ -195,12 +186,6 @@ pyplot.bar([item[0] for item in ham_stopwords.most_common(10)], [item[1] for ite
 pyplot.title('Top 10 most used stop words in non-spam messages')
 pyplot.show()
 
-### to do eventually: find out number of nouns, pos etc. for each category
-
-
-
-## content analysis
-### to do eventually: find out topic
 
 
 ## summary of text analysis
@@ -213,20 +198,12 @@ summary1 = stats.groupby("label").agg({
 summary1["count_unique_words"] = [len(ham_unique_words), len(spam_unique_words)]
 dfi.export(summary1, "documentation/tables_as_image/summary_text_analysis.png")
 
-## Summary of analysis of literals
+## summary of analysis of characters
 summary2 = stats.groupby("label").agg({
     "count_letters" : ["min", "mean", "median", "max"],
     "count_numbers" : ["min", "mean", "median", "max"],
     "count_dots" : ["min", "mean", "median", "max"],
     "count_spaces" : ["min", "mean", "median", "max"],
-    "count_other_literals" : ["min", "mean", "median", "max"]
+    "count_other_characters" : ["min", "mean", "median", "max"]
 })
-dfi.export(summary2, "documentation/tables_as_image/summary_literal_analysis.png")
-
-###all upper to dos are based on the given task or this guide:https://neptune.ai/blog/exploratory-data-analysis-natural-language-processing-tools
-# or this one: https://towardsdatascience.com/nlp-part-3-exploratory-data-analysis-of-text-data-1caa8ab3f79d
-# look at ISIS course. what is suggested?
-
-###eventually do:
-###Number of spelling mistakes in each category (spam and normal messages) and also in the whole dataset
-###
+dfi.export(summary2, "documentation/tables_as_image/summary_character_analysis.png")
