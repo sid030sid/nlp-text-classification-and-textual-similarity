@@ -1,5 +1,3 @@
-from copy import copy
-import numpy as np
 import pandas as pd
 import spacy
 import dataframe_image as dfi
@@ -13,7 +11,6 @@ corpus = pd.DataFrame(data)
 corpus["doc"] = data.message.apply(lambda doc : nlp(doc.lower())) # includes pre-proccessing step: tokenization, removal of white spaces and lower casing
 
 # Pre-processing:  
-# --> to do: should be different as this is a new case than before with spam filtering
 ## remove noises: punctuations, white spaces, stop words
 ## normalisation: lower case and lemmatization
 pre_processed_docs = []
@@ -31,8 +28,6 @@ corpus["doc"] = corpus.doc.apply(lambda doc : nlp(doc.lower())) # includes pre-p
 sample = corpus[corpus.label == "spam"].sample(15)
 
 # compute semantic textual similarity in form of cosine similarity by using the average of word vectors as a distributional semantics approach in sentence level
-## spacy's similarity function uses average of word vectors when it comes to comparing whole docs (source: https://spacy.io/usage/linguistic-features#similarity-expectations)
-## Per default spacy's similarity function for Document Objects uses cosine similarity to determine similarity in per centage. (source: https://spacy.io/api/doc#similarity)
 similarity_analysis = []
 for idx, row in sample.iterrows():
     for idx2, row2 in sample.iterrows():
@@ -44,3 +39,4 @@ similarity_analysis.columns = ["message", "similar_to", "cosine_similarity_score
 # summarize analysis: find for every message the most similar messages according to cosine similarity based on averade of word vectors in sentence level
 summary_similarity_analysis = similarity_analysis.groupby("message").max()
 dfi.export(summary_similarity_analysis, "documentation/tables_as_image/summary_similarity_analysis.png")
+summary_similarity_analysis.similar_to

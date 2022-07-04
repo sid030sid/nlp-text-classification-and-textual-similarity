@@ -207,3 +207,4 @@ summary2 = stats.groupby("label").agg({
     "count_other_characters" : ["min", "mean", "median", "max"]
 })
 dfi.export(summary2, "documentation/tables_as_image/summary_character_analysis.png")
+
